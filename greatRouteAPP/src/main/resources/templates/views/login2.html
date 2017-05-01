@@ -1,0 +1,38 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<link rel="icon" type="image/png" href="#"
+	th:href="@{/img/iconoGreatRoute.PNG}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<script type="text/javascript"
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="#" th:href="@{/css/estilo.css}" />
+
+<title>GreatRoute - Login</title>
+</head>
+<body>
+	<header>
+		<div id="cabecera" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<img th:src="@{/img/logoGreatRoute.PNG}" alt="Logo Great Route" />
+		</div>
+	</header>
+	<div class="container-fluid">
+		<form class="form-signin col-xs-12 col-sm-8 col-md-4 col-lg-4" action="#" th:action="@{/principal/addUser}" th:object="${user}"
+			method="post">
+			 <h2 class="form-signin-heading">Sign in</h2>
+			<label for="usernameField" class="sr-only">Nombre de usuario: </label> 
+			<input class="form-control"
+				id="usernameField" type="text" th:field="*{username}"
+				placeholder="Nombre de usuario" /> 
+			<label class="sr-only" for="passwordField">Password:</label>
+			<input class="form-control" id="passwordField" type="password" th:field="*{password}"
+				placeholder="Contraseña" />
+			<button class="btn btn-lg btn-primary btn-block" type="submit">
+				<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+				Sing in
+			</button>
+		</form>
+	</div>
+</body>
+</html>

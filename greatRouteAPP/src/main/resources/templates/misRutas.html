@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+</head>
+<body>
+	<div th:fragment="content" class="content-fluid">
+		<div class="col-xs-12 cuadro">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Origen</th>
+						<th>Destino</th>
+						<th>Distancia</th>
+						<th>Opciones</th>
+					</tr>
+				</thead>
+				<tbody th:each="ruta : ${rutas}">
+					<tr>
+						<td th:text="${ruta.origen}"></td>
+						<td th:text="${ruta.destino}"></td>
+						<td th:text="${ruta.distancia}"></td>
+						<td>
+							<a th:href="@{/index(rutaId=${ruta.id})}">Mostrar ruta</a>
+							<form th:action="@{/borrarRuta(rutaId=${ruta.id})}" method="POST" ><button type="submit">Borrar ruta</button></form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

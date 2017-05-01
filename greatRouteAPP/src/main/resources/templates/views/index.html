@@ -1,0 +1,71 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <link rel="icon" type="image/png" href="#" th:href="@{/img/iconoGreatRoute.PNG}" />
+        
+        <script type="text/javascript" 
+        src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        
+        <link rel="stylesheet"
+              href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <script type="text/javascript"
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+        <script src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" th:src="@{/js/api_google.js}"></script>
+        <script type="text/javascript" th:src="@{/js/opciones.js}"></script>
+        <script type="text/javascript">
+            // Load the Visualization API and the columnchart package.
+            google.load('visualization', '1', {
+            packages : [ 'columnchart' ]
+            });</script>
+        <script async='defer'
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEhtpCpnte2trStmVgZ2cwRxdca4bwpTI
+                &amp;libraries=drawing,geometry,places,visualization
+        &amp;callback=initMap"></script>
+        
+        <link rel="stylesheet" href="#" th:href="@{/css/estilo.css}"/>
+        <title>Great Route</title>
+    </head>
+    <body>
+        <header>
+            <div id="cabecera" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <img th:src="@{/img/logoGreatRoute.PNG}" alt="Logo Great Route" />
+            </div>
+            <ul id="menu" class="nav nav-pills col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a id="borrar" href="#">Borrar</a></li>
+                <li><a id="exportar" href="#">Exportar</a></li>
+                <li><a id="imprimir" href="#">Imprimir</a></li>
+                <li><a class="pull-left">Usuario:<span th:text="${user.username}"></span></a></li>
+            </ul>
+        </header>
+        <div class="container-fluid">
+            <div
+                class="col-xs-12 col-sm-3 col-md-3 col-lg-3 panel panel-default pull-left">
+                <div id="informacion" class="panel-body">
+                    <div id="distancia">
+                        <span>Distancia total:</span> <span id="distancia_value">0 Km</span>
+                    </div>
+                    <div id="altura">
+                        <span>Altura total:</span> <span id="altura_value"></span>
+                    </div>
+                    <div id="desnivel_pos">
+                        <span>Desnivel positivo:</span> <span id="desnivel_pos_value"></span>
+                    </div>
+                    <div id="desnivel_neg">
+                        <span>Desnivel negativo:</span> <span id="desnivel_neg_value"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 panel panel-default pull-right">
+                <input id="origin-input" class="controls" type="text"
+                       placeholder="Desde" /> <input id="destination-input"
+                       class="controls" type="text" placeholder="Hasta" />
+                <div id="mapa"></div>
+            </div>
+            <div id="elevation_chart"></div>
+
+        </div>
+    </body>
+</html>

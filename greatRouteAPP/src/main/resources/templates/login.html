@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Great Route</title>
+</head>
+<body>
+	<div class="container-fluid " th:fragment="content">
+		<form class="cuadro form-signin col-xs-12 col-sm-12 col-md-4 col-lg-4 pull-left"
+			 th:action="@{/loguear}" method="POST">
+			 <input type="hidden" name="${_crsf.parameterName}" value="${_crsf.token}"/>
+			<h2 class="form-signin-heading">Sign in</h2>
+			<label for="username" class="sr-only">Nombre de usuario:</label> 
+			<input class="form-control" id="username" type="text" placeholder="Nombre de usuario" name="username" /> 
+			<label class="sr-only" for="password">Password:</label> 
+			<input class="form-control" id="password" type="password" placeholder="Contraseña" name="password"/>
+			<div th:if="${error != null}" class="alert alert-danger" role="alert">Usuario o contraseña erronea!</div>
+			<div th:if="${logout != null}" class="alert alert-info" role="alert">Login correcto!</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">
+				<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+				Sing in
+			</button>
+		</form >
+		<div class=" cuadro col-xs-12 col-sm-12 col-md-7 col-lg-7 pull-right">
+			<h1>Great Route</h1>
+			<p>Esta aplicación te permitirá crear tus propias rutas de ciclismo de una manera facil y sencilla,
+			podrás exportarlas en formato GPX e imprimir la ruta con sus características.
+			También podras llevar un seguimiento de las rutas buscadas , guardando el origen  y el destino para
+			poder buscarlas en otro momento.<br/>
+			Pruebala, te encantará!</p>
+		</div>
+	</div>
+</body>
+</html>

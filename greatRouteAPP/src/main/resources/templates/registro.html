@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+</head>
+<body>
+		<div class="container-fluid" th:fragment="content">
+		<form class="cuadro form-signin col-xs-12 col-sm-8 col-md-4 col-lg-4"
+			th:action="@{/public/addUser}" th:object="${user}" method="post">
+			<h2 class="form-signin-heading">Registro:</h2>
+			<label for="usernameField" class="sr-only">Nombre de usuario:</label> 
+			<input class="form-control" id="usernameField" type="text"
+				th:field="*{username}" placeholder="Nombre de usuario" /> 
+			<label class="sr-only" for="passwordField">Contraseña:</label> 
+			<input class="form-control" id="passwordField" type="password"
+				th:field="*{password}" placeholder="Contraseña" />
+			<label class="sr-only" for="password2">Repite la contraseña:</label> 
+			<input class="form-control" id="password2" type="password"
+				name="password2" placeholder="Contraseña" />
+			<label for="emailField" class="sr-only">Email:</label> 
+			<input class="form-control" id="emailField" type="text"
+				th:field="*{email}" placeholder="Email" />
+			<div th:if="${error != null}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">
+			<span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+				Registrarse
+			</button>
+		</form>
+		</div>
+</body>
+</html>

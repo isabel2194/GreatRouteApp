@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Great Route</title>
+</head>
+<body>
+
+	<div class="container-fluid" th:fragment="content">
+		<input style="display:none;" id="jsonMapa" th:value="${rutaResponse}" />
+		<div
+			class="col-xs-12 col-sm-3 col-md-3 col-lg-3 panel panel-default pull-left">
+			<div id="informacion" class="panel-body">
+				<div id="distancia">
+					<span>Distancia total:</span><span id="distancia_value"
+						th:value="${distancia}">0 km</span>
+				</div>
+				<div id="altura">
+					<span>Altura total:</span> <span id="altura_value"></span>
+				</div>
+				<div id="desnivel_pos">
+					<span>Desnivel positivo:</span> <span id="desnivel_pos_value"></span>
+				</div>
+				<div id="desnivel_neg">
+					<span>Desnivel negativo:</span> <span id="desnivel_neg_value"></span>
+				</div>
+			</div>
+			<div id="options_mapa" class="panel-body">
+				<button id="guardarRuta">Guardar ruta</button>
+			</div>
+		</div>
+		<div
+			class="col-xs-12 col-sm-9 col-md-9 col-lg-9 panel panel-default pull-right">
+			<input id="origin-input" class="controls" type="text"
+				placeholder="Desde" name="origin-input" th:value="${origen}" /> <input
+				id="destination-input" class="controls" type="text"
+				placeholder="Hasta" name="destination-input" th:value="${destino}" />
+			<div id="mapa"></div>
+		</div>
+		<div id="elevation_chart"></div>
+	</div>
+</body>
+</html>
