@@ -42,6 +42,14 @@ public class RutaController {
 		return "redirect:/index";
 	}
 	
+	@PostMapping(path="/modificarRuta", consumes="application/json")
+	public String updateRuta(@RequestParam(value = "rutaId", required = false) String rutaId,@RequestBody String jsonResponse) {
+		UserDetails userDetails=(UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		usuarioActivo = userService.findByUsername(userDetails.getUsername());
+		rutaService.modificarRuta(rutaId,jsonResponse,usuarioActivo);
+		return "redirect:/index";
+	}
+	
 	@GetMapping("/misRutas")
 	public ModelAndView misRutas() {
 		UserDetails userDetails=(UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();

@@ -41,7 +41,50 @@ $(document).ready(function() {
 		});
 		evento.preventDefault();
 	});
+	$("#modificarRuta").click(function(evento) {
+		var data={};
+		var w = [], wp;
+		var rleg = directionsDisplay.directions.routes[0].legs[0];
+		data.start = {
+			'name': rleg.start_address,
+			'lat' : rleg.start_location.lat(),
+			'lng' : rleg.start_location.lng()
+		};
+		data.end = {
+			'name': rleg.end_address,	
+			'lat' : rleg.end_location.lat(),
+			'lng' : rleg.end_location.lng()
+		};
+		data.distance = rleg.distance.value;
+		data.time = rleg.duration.value;
+		var wp = rleg.via_waypoints;
+		for (var i = 0; i < wp.length; i++)
+			w[i] = [ wp[i].lat(), wp[i].lng() ]
+		data.waypoints = w;
+		$.ajax({
+			url : "modificarRuta?rutaId="+rutaID,
+			type : "POST",
+			data : JSON.stringify(data),
+			contentType : "application/json",
+			processData : false,
+			success : function(result) {
+				alert("Ruta guardada con éxito.")
+				// sacar mensaje de ruta guardada correctamente.
+			},
+			error : function(result) {
+				alert("Error al guardar la ruta.")
+				// sacar mensaje de ruta no guardada con exito.
+			}
+		});
+		evento.preventDefault();
+	});
 });
+
+var rutaID;
+
+function getRutaID(rutaid){
+	rutaID=rutaid;
+}
 
 /*
  * Permite imprimir el mapa y la información de la ruta

@@ -20,4 +20,6 @@ public interface RutaService {
 
 	String obtenerRecorrido(String path);
 
+	 boolean modificarRuta(String rutaId, String jsonResponse, UserModel usuarioActivo);
+
 }

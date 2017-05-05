@@ -48,6 +48,7 @@ public class HomeController {
 			mav.addObject("origen", ruta.getOrigen());
 			mav.addObject("destino", ruta.getDestino());
 			mav.addObject("rutaResponse", rutaService.obtenerRecorrido(ruta.getRecorrido()));
+			mav.addObject("rutaID", rutaId);
 		}
 		mav.addObject("username", usuarioActivo.getUsername());
 		mav.addObject(DEFAULT_VIEW_ATTRIBUTE_NAME, "mapa");

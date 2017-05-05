@@ -27,6 +27,8 @@
 			</div>
 			<div id="options_mapa" class="panel-body">
 				<button id="guardarRuta">Guardar ruta</button>
+				<button id="modificarRuta" th:onclick ="'javascript:getRutaID(${rutaID});'">Modificar ruta</button>
+				<form th:action="@{/borrarRuta(rutaId=${rutaID})}" method="POST" ><button id="borrarRuta" type="submit">Borrar ruta</button></form>
 			</div>
 		</div>
 		<div

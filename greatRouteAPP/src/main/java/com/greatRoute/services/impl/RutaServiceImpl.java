@@ -116,6 +116,11 @@ public class RutaServiceImpl implements RutaService {
 		}
 		return ruta;
 	}
+	
+	private void deleteFile(String name){
+		File fichero = new File(name);
+		fichero.delete();
+	}
 
 	@Override
 	public RutaModel obtenerRuta(int rutaId, UserModel user) {
@@ -151,5 +156,36 @@ public class RutaServiceImpl implements RutaService {
 			}
 		}
 		return cadena;
+	}
+
+	@Override
+	public boolean modificarRuta(String rutaId, String jsonResponse, UserModel usuarioActivo) {
+		Ruta ruta=rutaRepository.findById(Integer.valueOf(rutaId));
+		if(ruta!=null){
+			long distancia=0;
+			String origen = "";
+			String destino = "";
+			int tiempo = 0;
+
+			try {
+				JSONObject json= new JSONObject(jsonResponse);
+				distancia=json.getLong("distance");
+				origen = json.getJSONObject("start").getString("name");
+				destino = json.getJSONObject("end").getString("name");
+				tiempo = json.getInt("time");
+	;		} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			ruta.setDistancia(distancia);
+			ruta.setDestino(destino);
+			ruta.setOrigen(origen);
+			ruta.setTiempoEstimado(tiempo);
+			String rutaFile = createFile(jsonResponse, ruta.getUser().getUsername());
+			deleteFile(ruta.getRecorrido());
+			ruta.setRecorrido(rutaFile);
+			rutaRepository.save(ruta);
+			return true;
+		}
+		return false;
 	}
 }
