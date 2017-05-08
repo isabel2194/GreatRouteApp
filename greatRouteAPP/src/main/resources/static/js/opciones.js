@@ -140,5 +140,63 @@ function reiniciarComponentes() {
  * Realiza una peticion POST a un servicio que nos exporta la ruta a formato GPX
  */
 function exportarRuta() {
-
+	var rutaJSON = directionsDisplay.directions.routes[0].legs[0];
+	
+	
+	var data={};
+	var path = [], pathinfo, steps;
+	data.start = {
+		'name': rutaJSON.start_address,
+		'lat' : rutaJSON.start_location.lat(),
+		'lng' : rutaJSON.start_location.lng()
+	};
+	data.end = {
+		'name': rutaJSON.end_address,	
+		'lat' : rutaJSON.end_location.lat(),
+		'lng' : rutaJSON.end_location.lng()
+	};
+	var steps = rutaJSON.steps;
+	var cont=0;
+	for (var i = 0; i < steps.length; i++){
+		path[cont] = steps[i].path
+		cont++;
+	}
+	data.path = path;
+	
+	$.ajax({
+		url : "exportarRuta",
+		type : "POST",
+		data : JSON.stringify(data),
+		contentType : "application/json",
+		processData : false,
+		success : function(result) {
+			descargarArchivo(new Blob([result], {type:'application/xml'}));
+			alert("Ruta exportada con éxito.")
+			// sacar mensaje de ruta exportada correctamente.
+		},
+		error : function(result) {
+			alert("Error al exportar la ruta.")
+			// sacar mensaje de ruta no exportada con exito.
+		}
+	});
+	
 }
+
+
+function descargarArchivo(contenidoEnBlob) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var save = document.createElement('a');
+        save.href = event.target.result;
+        save.target = '_blank';
+        save.download = 'ruta.gpx';
+        var clicEvent = new MouseEvent('click', {
+            'view': window,
+                'bubbles': true,
+                'cancelable': true
+        });
+        save.dispatchEvent(clicEvent);
+        (window.URL || window.webkitURL).revokeObjectURL(save.href);
+    };
+    reader.readAsDataURL(contenidoEnBlob);
+};

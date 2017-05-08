@@ -22,4 +22,6 @@ public interface RutaService {
 
 	 boolean modificarRuta(String rutaId, String jsonResponse, UserModel usuarioActivo);
 
+	String createGPX(String jsonResponse);
+
 }

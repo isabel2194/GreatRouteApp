@@ -1,6 +1,5 @@
 package com.greatRoute.services.impl;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,8 +11,10 @@ import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
 import com.greatRoute.converter.RutaConverter;
@@ -24,6 +25,7 @@ import com.greatRoute.model.RutaModel;
 import com.greatRoute.model.UserModel;
 import com.greatRoute.repository.RutaRepository;
 import com.greatRoute.services.RutaService;
+import com.topografix.gpx._1._1.GpxType;
 
 @Service("rutaServiceImpl")
 public class RutaServiceImpl implements RutaService {
@@ -71,18 +73,19 @@ public class RutaServiceImpl implements RutaService {
 
 	@Override
 	public boolean procesarRuta(String jsonResponse, UserModel user) {
-		long distancia=0;
+		long distancia = 0;
 		String origen = "";
 		String destino = "";
 		int tiempo = 0;
 
 		try {
-			JSONObject json= new JSONObject(jsonResponse);
-			distancia=json.getLong("distance");
+			JSONObject json = new JSONObject(jsonResponse);
+			distancia = json.getLong("distance");
 			origen = json.getJSONObject("start").getString("name");
 			destino = json.getJSONObject("end").getString("name");
 			tiempo = json.getInt("time");
-;		} catch (JSONException e) {
+			;
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		if (user != null) {
@@ -116,8 +119,8 @@ public class RutaServiceImpl implements RutaService {
 		}
 		return ruta;
 	}
-	
-	private void deleteFile(String name){
+
+	private void deleteFile(String name) {
 		File fichero = new File(name);
 		fichero.delete();
 	}
@@ -143,7 +146,7 @@ public class RutaServiceImpl implements RutaService {
 			br = new BufferedReader(fr);
 			String linea;
 			while ((linea = br.readLine()) != null)
-				cadena+=linea;
+				cadena += linea;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -160,20 +163,21 @@ public class RutaServiceImpl implements RutaService {
 
 	@Override
 	public boolean modificarRuta(String rutaId, String jsonResponse, UserModel usuarioActivo) {
-		Ruta ruta=rutaRepository.findById(Integer.valueOf(rutaId));
-		if(ruta!=null){
-			long distancia=0;
+		Ruta ruta = rutaRepository.findById(Integer.valueOf(rutaId));
+		if (ruta != null) {
+			long distancia = 0;
 			String origen = "";
 			String destino = "";
 			int tiempo = 0;
 
 			try {
-				JSONObject json= new JSONObject(jsonResponse);
-				distancia=json.getLong("distance");
+				JSONObject json = new JSONObject(jsonResponse);
+				distancia = json.getLong("distance");
 				origen = json.getJSONObject("start").getString("name");
 				destino = json.getJSONObject("end").getString("name");
 				tiempo = json.getInt("time");
-	;		} catch (JSONException e) {
+				;
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			ruta.setDistancia(distancia);
@@ -187,5 +191,41 @@ public class RutaServiceImpl implements RutaService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String createGPX(String jsonResponse) {
+
+		String name = "pruebaGPX";
+		String gpx = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><gpx version=\"1.0\"><name>" + name + "</name>";
+		try {
+			JSONObject json = new JSONObject(jsonResponse);
+
+			Point origen = new Point(json.getJSONObject("start").getDouble("lat"),
+					json.getJSONObject("start").getDouble("lng"));
+			gpx += "<wpt lat=\"" + origen.getX() + "\" lon=\"" + origen.getY() + "\"><name>Inicio</name></wpt>";
+
+			Point destino = new Point(json.getJSONObject("end").getDouble("lat"),
+					json.getJSONObject("end").getDouble("lng"));
+			gpx += "<wpt lat=\"" + destino.getX() + "\" lon=\"" + destino.getY() + "\"><name>Destino</name></wpt>";
+
+			if (json.getJSONArray("path") != null) {
+				gpx+="<trk><trkseg>";
+				for (int i = 0; i < json.getJSONArray("path").length(); i++) {
+					JSONArray waypoints = (JSONArray)json.getJSONArray("path").get(i);
+					for (int j = 0; j < waypoints.length(); j++) {
+						JSONObject array=(JSONObject)waypoints.get(j);
+						gpx+="<trkpt lat=\""+array.getDouble("lat")+"\" lon=\""+array.getDouble("lng")+"\"></trkpt>";
+					}
+				}
+				gpx+="</trkseg></trk>";
+			}
+			gpx+="</gpx>";
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return gpx;
 	}
 }

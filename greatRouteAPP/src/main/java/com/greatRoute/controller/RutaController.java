@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.greatRoute.model.RutaModel;
@@ -66,6 +67,13 @@ public class RutaController {
 	public String deleteRuta(@RequestParam("rutaId") String id) {
 		rutaService.borrarRuta(id);
 		return "redirect:/misRutas";
+	}
+	
+	@PostMapping(path="/exportarRuta", consumes="application/json")
+	public @ResponseBody String exportarRuta(@RequestBody String jsonResponse) {
+		UserDetails userDetails=(UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		usuarioActivo = userService.findByUsername(userDetails.getUsername());
+		 return rutaService.createGPX(jsonResponse);
 	}
 	
 	
