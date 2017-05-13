@@ -26,7 +26,18 @@ body{
 
 .rutas_options{
 	border:none;
-	
+	background-color: #cccccc;
+	border-radius:5px;
+	padding:5px;
+	margin-bottom:5px;
+	text-align:center;
+	color:black;
+}
+
+.rutas_options:hover{
+	text-decoration: none;
+	background-color: gray;
+	color:white;
 }
 
 
@@ -86,9 +97,13 @@ header ul li a{
 	padding:2px;
 }
 
-#options_mapa button{
+#options_mapa button , #addPunto{
 	border:#cccccc thin solid;
 	border-radius:5px;
+	margin-bottom:5px;
+}
+
+#add_points input{
 	margin-bottom:5px;
 }
 

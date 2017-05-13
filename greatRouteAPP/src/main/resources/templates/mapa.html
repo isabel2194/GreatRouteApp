@@ -7,38 +7,56 @@
 <body>
 
 	<div class="container-fluid" th:fragment="content">
-		<input style="display:none;" id="jsonMapa" th:value="${rutaResponse}" />
+		<input style="display: none;" id="jsonMapa" th:value="${rutaResponse}" />
 		<div
 			class="col-xs-12 col-sm-3 col-md-3 col-lg-3 panel panel-default pull-left">
 			<div id="informacion" class="panel-body">
-				<div id="distancia">
-					<span>Distancia total:</span><span id="distancia_value"	th:value="${distancia}">0 km</span>
+				<div id="distancia" class="col-xs-12">
+					<span>Distancia total:</span><span id="distancia_value"
+						th:value="${distancia}">0 km</span>
 				</div>
-				<div id="altura">
+				<div id="altura" class="col-xs-12">
 					<span>Altura total:</span> <span id="altura_value"></span>
 				</div>
-				<div id="desnivel_pos">
+				<div id="desnivel_pos" class="col-xs-12">
 					<span>Desnivel positivo:</span> <span id="desnivel_pos_value"></span>
 				</div>
-				<div id="desnivel_neg">
+				<div id="desnivel_neg" class="col-xs-12">
 					<span>Desnivel negativo:</span> <span id="desnivel_neg_value"></span>
 				</div>
 			</div>
 			<div id="options_mapa" class="panel-body">
-				<button th:if="${rutaResponse==null}" id="guardarRuta" class="col-xs-12">Guardar ruta</button>
-				<button th:if="${rutaResponse!=null}" id="modificarRuta" class="col-xs-12">Modificar ruta</button>
-				<form  th:if="${rutaResponse!=null}" th:action="@{/borrarRuta}" method="POST"><button id="borrarRuta" class="col-xs-12" type="submit">Borrar ruta</button></form>
+				<button th:if="${rutaResponse==null}" id="guardarRuta"
+					class="col-xs-12">Guardar ruta</button>
+				<button th:if="${rutaResponse!=null}" id="modificarRuta"
+					class="col-xs-12">Modificar ruta</button>
+				<form th:if="${rutaResponse!=null}" th:action="@{/borrarRuta}"
+					method="POST">
+					<button id="borrarRuta" class="col-xs-12" type="submit">Borrar
+						ruta</button>
+				</form>
+			</div>
+			<div id="add_points" class="panel-body">
+				<h2>Puntos intermedios</h2>
+				<form>
+					<input id="waypoint-input" class="col-xs-12" type="text"
+						placeholder="Introduce un punto intermedio" /> <input
+						id="addPunto" class="col-xs-12" type="submit"
+						onclick="return añadirPuntoIntermedio()" value="Añadir punto" />
+				</form>
+				<ul id="listaPuntos" class="list-group">
+				</ul>
 			</div>
 		</div>
 		<div
 			class="col-xs-12 col-sm-9 col-md-9 col-lg-9 panel panel-default pull-right">
 			<input id="origin-input" class="controls" type="text"
-				placeholder="Desde" name="origin-input" th:value="${origen}" /> 
-			<input id="destination-input" class="controls" type="text"
+				placeholder="Desde" name="origin-input" th:value="${origen}" /> <input
+				id="destination-input" class="controls" type="text"
 				placeholder="Hasta" name="destination-input" th:value="${destino}" />
 			<div id="mapa"></div>
 		</div>
-		<div id="elevation_chart"></div>
+		<div id="elevation_chart" class="col-xs-12"></div>
 	</div>
 </body>
 </html>

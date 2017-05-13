@@ -195,3 +195,50 @@ function descargarArchivo(contenidoEnBlob) {
     reader.readAsDataURL(contenidoEnBlob);
 }
 
+
+/**
+ * Funcion que añade un <li> dentro del <ul>
+ */
+function añadirPuntoIntermedio()
+{
+    var nuevoPunto=document.getElementById("waypoint-input").value;
+    if(nuevoPunto.length>0)
+    {
+        if(find_li(nuevoPunto))
+        {
+            var li=document.createElement('li');
+            li.id=nuevoPunto;
+            $(li).addClass("list-group-item");
+            $(li).addClass("col-xs-12");
+            li.innerHTML="<button class='pull-right' onclick='eliminarPuntoIntermedio(this)'>X</button>"+nuevoPunto;
+            document.getElementById("listaPuntos").appendChild(li);
+        }
+    }
+    return false;
+}
+
+/**
+ * Funcion que busca si existe ya el <li> dentrol del <ul>
+ * Devuelve true si no existe.
+ */
+function find_li(contenido)
+{
+    var el = document.getElementById("listaPuntos").getElementsByTagName("li");
+    for (var i=0; i<el.length; i++)
+    {
+        if(el[i].innerHTML==contenido)
+            return false;
+    }
+    return true;
+}
+
+/**
+ * Funcion para eliminar los elementos
+ * Tiene que recibir el elemento pulsado
+ */
+function eliminarPuntoIntermedio(elemento)
+{
+    var id=elemento.parentNode.getAttribute("id");
+    node=document.getElementById(id);
+    node.parentNode.removeChild(node);
+}
