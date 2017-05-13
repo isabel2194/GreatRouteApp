@@ -24,6 +24,11 @@ body{
     margin-top: 5px;
 }
 
+.rutas_options{
+	border:none;
+	
+}
+
 
 .controls {
     margin: 10px 10px 10px 10px;
@@ -79,6 +84,30 @@ header ul li a{
 
 .cuadro p{
 	padding:2px;
+}
+
+#options_mapa button{
+	border:#cccccc thin solid;
+	border-radius:5px;
+	margin-bottom:5px;
+}
+
+.button-logout{
+	border:none;
+	background-color:white;
+	border-radius: 4px;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    font-family: 'Audiowide';
+    font-style: oblique;
+    font-size: 18px;
+    color: #337ab7;
+    text-decoration: none;
+}
+
+.button-logout:hover{
+	background-color:#ddd;
 }
 
 footer{

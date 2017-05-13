@@ -21,8 +21,8 @@
 						<td th:text="${ruta.destino}"></td>
 						<td th:text="${ruta.distancia}"></td>
 						<td>
-							<a th:href="@{/index(rutaId=${ruta.id})}">Mostrar ruta</a>
-							<form th:action="@{/borrarRuta(rutaId=${ruta.id})}" method="POST" ><button type="submit">Borrar ruta</button></form>
+							<a th:href="@{/index(rutaId=${ruta.id})}" class="rutas_options">Mostrar ruta</a>
+							<form th:action="@{/borrarRuta(rutaId=${ruta.id})}" method="POST"><button class="rutas_options" type="submit">Borrar ruta</button></form>
 						</td>
 					</tr>
 				</tbody>

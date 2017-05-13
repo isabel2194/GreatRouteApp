@@ -14,13 +14,13 @@ public interface RutaService {
 	
 	public abstract boolean guardarRuta(Ruta ruta);
 	
-	void borrarRuta(String id);
+	void borrarRuta(int id);
 	
 	RutaModel obtenerRuta(int rutaId,UserModel user);
 
 	String obtenerRecorrido(String path);
 
-	 boolean modificarRuta(String rutaId, String jsonResponse, UserModel usuarioActivo);
+	 boolean modificarRuta(int rutaId, String jsonResponse, UserModel usuarioActivo);
 
 	String createGPX(String jsonResponse);
 

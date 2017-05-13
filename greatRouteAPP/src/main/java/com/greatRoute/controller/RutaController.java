@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,10 +43,10 @@ public class RutaController {
 	}
 	
 	@PostMapping(path="/modificarRuta", consumes="application/json")
-	public String updateRuta(@RequestParam(value = "rutaId", required = false) String rutaId,@RequestBody String jsonResponse) {
+	public String updateRuta(@RequestBody String jsonResponse) {
 		UserDetails userDetails=(UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		usuarioActivo = userService.findByUsername(userDetails.getUsername());
-		rutaService.modificarRuta(rutaId,jsonResponse,usuarioActivo);
+		rutaService.modificarRuta(HomeController.rutaActual,jsonResponse,usuarioActivo);
 		return "redirect:/index";
 	}
 	
@@ -64,8 +63,8 @@ public class RutaController {
 	}
 	
 	@PostMapping("/borrarRuta")
-	public String deleteRuta(@RequestParam("rutaId") String id) {
-		rutaService.borrarRuta(id);
+	public String deleteRuta() {
+		rutaService.borrarRuta(HomeController.rutaActual);
 		return "redirect:/misRutas";
 	}
 	
@@ -75,7 +74,5 @@ public class RutaController {
 		usuarioActivo = userService.findByUsername(userDetails.getUsername());
 		 return rutaService.createGPX(jsonResponse);
 	}
-	
-	
 
 }

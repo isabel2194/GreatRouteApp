@@ -35,6 +35,7 @@ public class HomeController {
 	private RutaService rutaService;
 
 	UserModel usuarioActivo;
+	protected static int rutaActual;
 
 	@GetMapping({ "/index", "/" })
 	public ModelAndView home(@RequestParam(value = "rutaId", required = false) String rutaId) {
@@ -48,7 +49,7 @@ public class HomeController {
 			mav.addObject("origen", ruta.getOrigen());
 			mav.addObject("destino", ruta.getDestino());
 			mav.addObject("rutaResponse", rutaService.obtenerRecorrido(ruta.getRecorrido()));
-			mav.addObject("rutaID", rutaId);
+			rutaActual=Integer.valueOf(rutaId);
 		}
 		mav.addObject("username", usuarioActivo.getUsername());
 		mav.addObject(DEFAULT_VIEW_ATTRIBUTE_NAME, "mapa");

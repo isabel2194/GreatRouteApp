@@ -25,7 +25,6 @@ import com.greatRoute.model.RutaModel;
 import com.greatRoute.model.UserModel;
 import com.greatRoute.repository.RutaRepository;
 import com.greatRoute.services.RutaService;
-import com.topografix.gpx._1._1.GpxType;
 
 @Service("rutaServiceImpl")
 public class RutaServiceImpl implements RutaService {
@@ -64,8 +63,8 @@ public class RutaServiceImpl implements RutaService {
 	}
 
 	@Override
-	public void borrarRuta(String id) {
-		Ruta ruta = rutaRepository.findById(Integer.valueOf(id));
+	public void borrarRuta(int id) {
+		Ruta ruta = rutaRepository.findById(id);
 		File file = new File(ruta.getRecorrido());
 		file.delete();
 		rutaRepository.delete(ruta);
@@ -162,8 +161,8 @@ public class RutaServiceImpl implements RutaService {
 	}
 
 	@Override
-	public boolean modificarRuta(String rutaId, String jsonResponse, UserModel usuarioActivo) {
-		Ruta ruta = rutaRepository.findById(Integer.valueOf(rutaId));
+	public boolean modificarRuta(int rutaId, String jsonResponse, UserModel usuarioActivo) {
+		Ruta ruta = rutaRepository.findById(rutaId);
 		if (ruta != null) {
 			long distancia = 0;
 			String origen = "";

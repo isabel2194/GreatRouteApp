@@ -62,7 +62,7 @@ $(document).ready(function() {
 			w[i] = [ wp[i].lat(), wp[i].lng() ]
 		data.waypoints = w;
 		$.ajax({
-			url : "modificarRuta?rutaId="+rutaID,
+			url : "modificarRuta",
 			type : "POST",
 			data : JSON.stringify(data),
 			contentType : "application/json",
@@ -79,12 +79,6 @@ $(document).ready(function() {
 		evento.preventDefault();
 	});
 });
-
-var rutaID;
-
-function getRutaID(rutaid){
-	rutaID=rutaid;
-}
 
 /*
  * Permite imprimir el mapa y la información de la ruta
@@ -199,4 +193,5 @@ function descargarArchivo(contenidoEnBlob) {
         (window.URL || window.webkitURL).revokeObjectURL(save.href);
     };
     reader.readAsDataURL(contenidoEnBlob);
-};
+}
+
