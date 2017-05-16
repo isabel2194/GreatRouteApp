@@ -196,10 +196,13 @@ function descargarArchivo(contenidoEnBlob) {
 }
 
 
+var waypoints=[];
+var cont=0;
+
 /**
  * Funcion que añade un <li> dentro del <ul>
  */
-function añadirPuntoIntermedio()
+function añadirPuntoIntermedio(waypoint_autocomplete)
 {
     var nuevoPunto=document.getElementById("waypoint-input").value;
     if(nuevoPunto.length>0)
@@ -210,10 +213,19 @@ function añadirPuntoIntermedio()
             li.id=nuevoPunto;
             $(li).addClass("list-group-item");
             $(li).addClass("col-xs-12");
-            li.innerHTML="<button class='pull-right' onclick='eliminarPuntoIntermedio(this)'>X</button>"+nuevoPunto;
+            li.innerHTML="<button id='deletePoint' class='pull-right'>X</button>"+nuevoPunto;
             document.getElementById("listaPuntos").appendChild(li);
         }
     }
+    
+    place=waypoint_autocomplete.getPlace();
+    //Añadimos a la ruta
+    waypoints.push({
+    	'location': nuevoPunto,
+    	'stopover':true
+    });
+    cont=cont+1;
+    
     return false;
 }
 
@@ -241,4 +253,9 @@ function eliminarPuntoIntermedio(elemento)
     var id=elemento.parentNode.getAttribute("id");
     node=document.getElementById(id);
     node.parentNode.removeChild(node);
+    
+  //Añadimos a la ruta
+    waypoints.pop();
+    cont=cont-1;
+    
 }

@@ -31,8 +31,10 @@ function initMap() {
 
 	var origin_input = document.getElementById('origin-input');
 	var destination_input = document.getElementById('destination-input');
+	var waypoint_input = document.getElementById('waypoint-input');
 	var modes = document.getElementById('mode-selector');
 
+	//Posicion visual en el mapa
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(origin_input);
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(destination_input);
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(modes);
@@ -42,8 +44,13 @@ function initMap() {
 	var destination_autocomplete = new google.maps.places.Autocomplete(
 			destination_input);
 	destination_autocomplete.bindTo('bounds', map);
+	var waypoint_autocomplete = new google.maps.places.Autocomplete(
+			waypoint_input);
+	waypoint_autocomplete.bindTo('bounds', map);
+	
 	var origin_location = null;
 	var destination_location = null;
+	var waypoint_location=null;
 
 	function expandViewportToFitPlace(map, place) {
 		if (place.geometry.viewport) {
@@ -66,8 +73,9 @@ function initMap() {
 		// the other place ID
 		origin_place_id = place.place_id;
 		origin_location = place.geometry.location;
-		route(origin_place_id, destination_place_id, travel_mode);
+		route(origin_place_id, destination_place_id,waypoints, travel_mode);
 	});
+	
 
 	destination_autocomplete.addListener('place_changed', function() {
 		var place = destination_autocomplete.getPlace();
@@ -81,7 +89,7 @@ function initMap() {
 		// the other place ID
 		destination_place_id = place.place_id;
 		destination_location = place.geometry.location;
-		route(origin_place_id, destination_place_id, travel_mode);
+		route(origin_place_id, destination_place_id, waypoints, travel_mode);
 
 		var path = [ origin_location, destination_location ];
 
@@ -93,6 +101,18 @@ function initMap() {
 	directionsDisplay.addListener('directions_changed', function() {
 		computeTotalDistance(directionsDisplay.getDirections());
 	});
+	
+	$("#addPunto").click(function(evento) {
+		añadirPuntoIntermedio(waypoint_autocomplete);
+		route(origin_place_id, destination_place_id, waypoints, travel_mode);
+	});
+	
+	
+	$("#deletePoint").click(function(evento) {
+		eliminarPuntoIntermedio(this);
+		route(origin_place_id, destination_place_id, waypoints, travel_mode);
+	});
+		
 
 	var defaultResponse = $('#jsonMapa').val();
 	var objeto = JSON.parse(defaultResponse);
@@ -128,7 +148,7 @@ function setRoute(actualRoute)
 /**
  * Calcula la ruta y la dibuja en el mapa
  */
-function route(origin_place_id, destination_place_id, travel_mode) {
+function route(origin_place_id, destination_place_id, waypoints_array, travel_mode) {
 
 	if (!origin_place_id || !destination_place_id) {
 		return;
@@ -140,6 +160,8 @@ function route(origin_place_id, destination_place_id, travel_mode) {
 		destination : {
 			'placeId' : destination_place_id
 		},
+		waypoints : waypoints_array,
+		optimizeWaypoints: true,
 		travelMode : travel_mode
 	}, function(response, status) {
 		if (status === google.maps.DirectionsStatus.OK) {
