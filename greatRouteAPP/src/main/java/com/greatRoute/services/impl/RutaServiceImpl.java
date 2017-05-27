@@ -65,8 +65,10 @@ public class RutaServiceImpl implements RutaService {
 	@Override
 	public void borrarRuta(int id) {
 		Ruta ruta = rutaRepository.findById(id);
-		File file = new File(ruta.getRecorrido());
-		file.delete();
+		if(ruta!=null){
+			File file = new File(ruta.getRecorrido());
+			file.delete();
+		}
 		rutaRepository.delete(ruta);
 	}
 

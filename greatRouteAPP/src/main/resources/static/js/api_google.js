@@ -11,12 +11,12 @@ var responseActualRoute;
  */
 function initMap() {
 	map = new google.maps.Map(document.getElementById('mapa'), {
-		mapTypeControl : false,
+		mapTypeControl : true,
 		center : {
-			lat : -33.8688,
-			lng : 151.2195
+			lat : 40.463667,
+			lng : -3.74922
 		},
-		zoom : 13
+		zoom : 6
 	});
 
 	var origin_place_id = null;
@@ -34,7 +34,7 @@ function initMap() {
 	var waypoint_input = document.getElementById('waypoint-input');
 	var modes = document.getElementById('mode-selector');
 
-	//Posicion visual en el mapa
+	// Posicion visual en el mapa
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(origin_input);
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(destination_input);
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(modes);
@@ -108,41 +108,70 @@ function initMap() {
 	});
 	
 	
-	$("#deletePoint").click(function(evento) {
+	$("#listaPuntos").on('click','.delete',function(evento) {
 		eliminarPuntoIntermedio(this);
 		route(origin_place_id, destination_place_id, waypoints, travel_mode);
 	});
 		
 
 	var defaultResponse = $('#jsonMapa').val();
-	var objeto = JSON.parse(defaultResponse);
-	setRoute(objeto);
+	if(defaultResponse !=""){
+		var objeto = JSON.parse(defaultResponse);
+		setRoute(objeto);
+	}
 }
 
+var origen;
+var destino;
+var puntos;
 /**
- * Dibuja una ruta determinada en el mapa, dado el origen, los puntos intermedios y el destino.
+ * Dibuja una ruta determinada en el mapa, dado el origen, los puntos
+ * intermedios y el destino.
  */
 function setRoute(actualRoute)
 {
+	var contador=0;
     var wp = [];
-    for(var i=0;i<actualRoute.waypoints.length;i++)
-        wp[i] = {'location': new google.maps.LatLng(actualRoute.waypoints[i][0], actualRoute.waypoints[i][1]),'stopover':false }
-         
-    directionsService.route({'origin':new google.maps.LatLng(actualRoute.start.lat,actualRoute.start.lng),
+    for(var l=0;l<actualRoute.legs.length;l++){
+    	if(actualRoute.legs[l].point != undefined){
+    		wp[contador] = {'location': new google.maps.LatLng(actualRoute.legs[l].point.lat, actualRoute.legs[l].point.lng),'stopover':false };
+    		contador=contador+1;
+    	}
+		for(var i=0;i<actualRoute.legs[l].waypoints.length;i++){
+		   wp[contador] = {'location': new google.maps.LatLng(actualRoute.legs[l].waypoints[i][0], actualRoute.legs[l].waypoints[i][1]),'stopover':false };
+		   contador=contador+1;
+		 }   
+	}
+    
+    origen=new google.maps.LatLng(actualRoute.start.lat,actualRoute.start.lng);
+    destino=new google.maps.LatLng(actualRoute.end.lat,actualRoute.end.lng);
+    
+    directionsService.route({
+    'origin':new google.maps.LatLng(actualRoute.start.lat,actualRoute.start.lng),
     'destination':new google.maps.LatLng(actualRoute.end.lat,actualRoute.end.lng),
     'waypoints': wp,
     'travelMode': google.maps.DirectionsTravelMode.DRIVING},function(res,sts) {
-        if(sts=='OK')directionsDisplay.setDirections(res);
-    })
-    var locations = [];
-    var cont=0;
-    for(var i=0;i<directionsDisplay.directions.routes[0].legs.lenght;i++){
-    	for(var j=0;j<directionsDisplay.directions.routes[0].legs[i].steps.lenght;j++){
-    		locations[cont]=directionsService.routes[0].legs[i].steps[j].path;
-    		cont=cont+1;
-    	}
+        if(sts=='OK'){
+        	directionsDisplay.setDirections(res);
+        	$('#addPunto').removeAttr('disabled');
+        	var conta=0;
+        	var locations = [];
+            for(var i=0;i<directionsDisplay.directions.routes[0].legs.length;i++){
+            	for(var j=0;j<directionsDisplay.directions.routes[0].legs[i].steps.length;j++){
+            			locations[conta]=new google.maps.LatLng(directionsDisplay.directions.routes[0].legs[i].steps[j].start_point.lat(),directionsDisplay.directions.routes[0].legs[i].steps[j].start_point.lng());
+            			conta=conta + 1;
+            	}
+            }
+            if(locations.length>0)
+            	displayPathElevation(locations);
+        }
+    });
+    cont=0;
+
+    for(var i=0;i<wp.length;i++){
+    	waypoints[cont]=wp[i];
+    	cont=cont+1;
     }
-    displayPathElevation(locations);
 }
 
 /**
@@ -151,26 +180,48 @@ function setRoute(actualRoute)
 function route(origin_place_id, destination_place_id, waypoints_array, travel_mode) {
 
 	if (!origin_place_id || !destination_place_id) {
-		return;
+		origin_place_id=origen;
+		destination_place_id=destino;
+		if (!origin_place_id || !destination_place_id) 
+			return;
+		
+		directionsService.route({
+			'origin': origin_place_id ,
+			'destination': destination_place_id ,
+			'waypoints' : waypoints_array,
+			'optimizeWaypoints': true,
+			'travelMode' : travel_mode
+		}, function(response, status) {
+			if (status === google.maps.DirectionsStatus.OK) {
+				responseActualRoute = response;
+				directionsDisplay.setDirections(response);
+				$('#addPunto').removeAttr('disabled');
+			} else {
+				window.alert('Directions request failed due to ' + status);
+			}
+		});
+	}else{	
+		directionsService.route({
+			origin : {
+				'placeId' : origin_place_id
+			},
+			destination : {
+				'placeId' : destination_place_id
+			},
+			'waypoints' : waypoints_array,
+			optimizeWaypoints: true,
+			travelMode : travel_mode
+		}, function(response, status) {
+			if (status === google.maps.DirectionsStatus.OK) {
+				responseActualRoute = response;
+				directionsDisplay.setDirections(response);
+				$('#addPunto').removeAttr('disabled');
+	
+			} else {
+				window.alert('Directions request failed due to ' + status);
+			}
+		});
 	}
-	directionsService.route({
-		origin : {
-			'placeId' : origin_place_id
-		},
-		destination : {
-			'placeId' : destination_place_id
-		},
-		waypoints : waypoints_array,
-		optimizeWaypoints: true,
-		travelMode : travel_mode
-	}, function(response, status) {
-		if (status === google.maps.DirectionsStatus.OK) {
-			responseActualRoute = response;
-			directionsDisplay.setDirections(response);
-		} else {
-			window.alert('Directions request failed due to ' + status);
-		}
-	});
 }
 
 
@@ -185,7 +236,7 @@ function displayPathElevation(path) {
 	// Display a polyline of the elevation path.
 	polyline = new google.maps.Polyline({
 		path : path,
-		strokeColor : '#008000',
+		strokeColor : '#800800',
 		opacity : 0.2,
 		map : map
 	});
@@ -196,6 +247,15 @@ function displayPathElevation(path) {
 		'path' : path,
 		'samples' : 256
 	}, plotElevation);
+}
+
+function displayLocationElevation(locations) {
+	
+	var elevator = new google.maps.ElevationService;
+	elevator.getElevationForLocations({
+	   'locations': locations
+	}, plotElevation);
+	
 }
 
 // Takes an array of ElevationResult objects, draws the path on the map
@@ -209,7 +269,7 @@ function plotElevation(elevations, status) {
 		return;
 	}
 	// Create a new chart in the elevation_chart DIV.
-	var chart = new google.visualization.LineChart(chartDiv);
+	var chart = new google.visualization.ColumnChart(chartDiv);
 
 	// Extract the data from which to populate the chart.
 	// Because the samples are equidistant, the 'Sample'
@@ -233,6 +293,7 @@ function plotElevation(elevations, status) {
 
 /**
  * Calcula la distancia total en km
+ * 
  * @param result
  */
 function computeTotalDistance(result) {

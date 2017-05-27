@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -59,12 +60,16 @@ public class RutaController {
 		mav.setViewName(DEFAULT_LAYOUT);
 		mav.addObject(DEFAULT_VIEW_ATTRIBUTE_NAME, "misRutas");
 		mav.addObject("rutas", rutas);
+		mav.addObject("username",usuarioActivo.getUsername());
 		return mav;
 	}
 	
 	@PostMapping("/borrarRuta")
-	public String deleteRuta() {
-		rutaService.borrarRuta(HomeController.rutaActual);
+	public String deleteRuta(@RequestParam(value = "rutaId", required = false) String rutaId) {
+		if(rutaId!=null)
+			rutaService.borrarRuta(Integer.valueOf(rutaId));
+		else
+			rutaService.borrarRuta(HomeController.rutaActual);
 		return "redirect:/misRutas";
 	}
 	

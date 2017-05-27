@@ -4,26 +4,46 @@ $(document).ready(function() {
 	$("#imprimir").click(function() {
 		printMaps();
 	});
+	
 	$("#guardarRuta").click(function(evento) {
 		var data={};
-		var w = [], wp;
-		var rleg = directionsDisplay.directions.routes[0].legs[0];
+		var w = []
+		var wp = [];
+		data.distance = 0;
+		data.time = 0;
+		var route = directionsDisplay.directions.routes[0];
 		data.start = {
-			'name': rleg.start_address,
-			'lat' : rleg.start_location.lat(),
-			'lng' : rleg.start_location.lng()
+				'name': route.legs[0].start_address,
+				'lat' : route.legs[0].start_location.lat(),
+				'lng' : route.legs[0].start_location.lng()
 		};
 		data.end = {
-			'name': rleg.end_address,	
-			'lat' : rleg.end_location.lat(),
-			'lng' : rleg.end_location.lng()
+			'name': route.legs[route.legs.length-1].end_address,	
+			'lat' : route.legs[route.legs.length-1].end_location.lat(),
+			'lng' : route.legs[route.legs.length-1].end_location.lng()
 		};
-		data.distance = rleg.distance.value;
-		data.time = rleg.duration.value;
-		var wp = rleg.via_waypoints;
-		for (var i = 0; i < wp.length; i++)
-			w[i] = [ wp[i].lat(), wp[i].lng() ]
-		data.waypoints = w;
+		data.legs = [];
+		for(var i=0;i<route.legs.length;i++){
+			data.legs[i]={ 
+				'point':{
+						'name': route.legs[i].start_address,
+						'lat' : route.legs[i].start_location.lat(),
+						'lng' : route.legs[i].start_location.lng()
+					},
+				'waypoints':[]
+			};
+			data.distance = data.distance + route.legs[i].distance.value;
+			data.time = data.time + route.legs[i].duration.value;
+			wp=route.legs[i].via_waypoints;
+			
+			if(wp!=undefined){
+				for (var j = 0; j < wp.length; j++)
+					w[j] = [ wp[j].lat(), wp[j].lng() ]
+				data.legs[i].waypoints = w;
+				w=[];
+			}
+		}
+		
 		$.ajax({
 			url : "guardarRuta",
 			type : "POST",
@@ -31,36 +51,53 @@ $(document).ready(function() {
 			contentType : "application/json",
 			processData : false,
 			success : function(result) {
-				alert("Ruta guardada con éxito.")
-				// sacar mensaje de ruta guardada correctamente.
+				informar("La ruta se ha guardado correctamente.");
 			},
 			error : function(result) {
-				alert("Error al guardar la ruta.")
-				// sacar mensaje de ruta no guardada con exito.
+				informar("Se ha producido un error al guardar la ruta.");
 			}
 		});
 		evento.preventDefault();
 	});
+	
 	$("#modificarRuta").click(function(evento) {
 		var data={};
-		var w = [], wp;
-		var rleg = directionsDisplay.directions.routes[0].legs[0];
+		var w = []
+		var wp = [];
+		data.distance = 0;
+		data.time = 0;
+		var route = directionsDisplay.directions.routes[0];
 		data.start = {
-			'name': rleg.start_address,
-			'lat' : rleg.start_location.lat(),
-			'lng' : rleg.start_location.lng()
+				'name': route.legs[0].start_address,
+				'lat' : route.legs[0].start_location.lat(),
+				'lng' : route.legs[0].start_location.lng()
 		};
 		data.end = {
-			'name': rleg.end_address,	
-			'lat' : rleg.end_location.lat(),
-			'lng' : rleg.end_location.lng()
+			'name': route.legs[route.legs.length-1].end_address,	
+			'lat' : route.legs[route.legs.length-1].end_location.lat(),
+			'lng' : route.legs[route.legs.length-1].end_location.lng()
 		};
-		data.distance = rleg.distance.value;
-		data.time = rleg.duration.value;
-		var wp = rleg.via_waypoints;
-		for (var i = 0; i < wp.length; i++)
-			w[i] = [ wp[i].lat(), wp[i].lng() ]
-		data.waypoints = w;
+		data.legs = [];
+		for(var i=0;i<route.legs.length;i++){
+			data.legs[i]={ 
+				'point':{
+						'name': route.legs[i].start_address,
+						'lat' : route.legs[i].start_location.lat(),
+						'lng' : route.legs[i].start_location.lng()
+					},
+				'waypoints':[]
+			};
+			data.distance = data.distance + route.legs[i].distance.value;
+			data.time = data.time + route.legs[i].duration.value;
+			wp=route.legs[i].via_waypoints;
+			
+			if(wp!=undefined){
+				for (var j = 0; j < wp.length; j++)
+					w[j] = [ wp[j].lat(), wp[j].lng() ]
+				data.legs[i].waypoints = w;
+			}
+		}
+		
 		$.ajax({
 			url : "modificarRuta",
 			type : "POST",
@@ -68,17 +105,18 @@ $(document).ready(function() {
 			contentType : "application/json",
 			processData : false,
 			success : function(result) {
-				alert("Ruta guardada con éxito.")
-				// sacar mensaje de ruta guardada correctamente.
+				informar("La ruta se ha modificado correctamente.");
 			},
 			error : function(result) {
-				alert("Error al guardar la ruta.")
-				// sacar mensaje de ruta no guardada con exito.
+				informar("Se ha producido un error al modificar la ruta.");
+
 			}
 		});
 		evento.preventDefault();
 	});
+	
 });
+
 
 /*
  * Permite imprimir el mapa y la información de la ruta
@@ -91,17 +129,13 @@ function printMaps() {
 	var logo = $("#cabecera").find("img");
 	logo.css("width", "200px");
 	var info = $("#informacion");
+	var infoParent = $("#informacion").parent();
 
 	printContainer.addClass('print-container').css('position', 'relative').css(
 			'text-align', 'center').height(mapContainer.height()).append(logo)
 			.append(info).append(mapContainer).prependTo(body);
 
 	var content = body.children().not('script').not(printContainer).detach();
-
-	/*
-	 * Needed for those who use Bootstrap 3.x, because some of its `@media
-	 * print` styles ain't play nicely when printing.
-	 */
 	var patchedStyle = $('<style>').attr('media', 'print').text(
 			'img { max-width: none !important; }'
 					+ 'a[href]:after { content: ""; }').appendTo('head');
@@ -112,7 +146,7 @@ function printMaps() {
 
 	body.prepend(content);
 	mapContainerParent.prepend(mapContainer);
-	$("#div_info").prepend(info);
+	infoParent.prepend(info);
 	$("#cabecera").prepend(logo);
 
 	printContainer.remove();
@@ -128,32 +162,40 @@ function reiniciarComponentes() {
 	directionsDisplay.setMap(null);// Elimina la ruta
 	$("#distancia_value").html("0 Km");// Elimina el valor total de distancia
 	polyline.setMap(null); // Elimina la linea de perfil
+	$('#addPunto').attr('disabled','disabled');// Deshabilita el boton de
+												// añadir waypoint a la ruta
+	$("#waypoint-input").val('');// Elimina el campo de introducir waypoints
+	$("#listaPuntos").empty();// Vacia los waypoints que haya
+	waypoints=[];
+	cont=0;
 }
 
 /**
  * Realiza una peticion POST a un servicio que nos exporta la ruta a formato GPX
  */
 function exportarRuta() {
-	var rutaJSON = directionsDisplay.directions.routes[0].legs[0];
-	
+	var rutaJSON = directionsDisplay.directions.routes[0];
 	
 	var data={};
 	var path = [], pathinfo, steps;
+	
 	data.start = {
-		'name': rutaJSON.start_address,
-		'lat' : rutaJSON.start_location.lat(),
-		'lng' : rutaJSON.start_location.lng()
+		'name': rutaJSON.legs[0].start_address,
+		'lat' : rutaJSON.legs[0].start_location.lat(),
+		'lng' : rutaJSON.legs[0].start_location.lng()
 	};
 	data.end = {
-		'name': rutaJSON.end_address,	
-		'lat' : rutaJSON.end_location.lat(),
-		'lng' : rutaJSON.end_location.lng()
+		'name': rutaJSON.legs[rutaJSON.legs.length-1].end_address,	
+		'lat' : rutaJSON.legs[rutaJSON.legs.length-1].end_location.lat(),
+		'lng' : rutaJSON.legs[rutaJSON.legs.length-1].end_location.lng()
 	};
-	var steps = rutaJSON.steps;
-	var cont=0;
-	for (var i = 0; i < steps.length; i++){
-		path[cont] = steps[i].path
-		cont++;
+	var contar=0;
+	for(var i=0;i<rutaJSON.legs.length;i++){
+		var steps = rutaJSON.legs[i].steps;
+		for (var i = 0; i < steps.length; i++){
+			path[contar] = steps[i].path
+			contar++;
+		}
 	}
 	data.path = path;
 	
@@ -175,7 +217,6 @@ function exportarRuta() {
 	});
 	
 }
-
 
 function descargarArchivo(contenidoEnBlob) {
     var reader = new FileReader();
@@ -200,37 +241,41 @@ var waypoints=[];
 var cont=0;
 
 /**
- * Funcion que añade un <li> dentro del <ul>
+ * Funcion que añade un
+ * <li> dentro del
+ * <ul>
  */
 function añadirPuntoIntermedio(waypoint_autocomplete)
 {
     var nuevoPunto=document.getElementById("waypoint-input").value;
+    $("#waypoint-input").val('');
     if(nuevoPunto.length>0)
-    {
+     {
         if(find_li(nuevoPunto))
         {
             var li=document.createElement('li');
             li.id=nuevoPunto;
             $(li).addClass("list-group-item");
             $(li).addClass("col-xs-12");
-            li.innerHTML="<button id='deletePoint' class='pull-right'>X</button>"+nuevoPunto;
+            var boton = $("<button class='pull-right delete'></button>").text("X");
+            $(li).append(boton,nuevoPunto);
             document.getElementById("listaPuntos").appendChild(li);
         }
     }
-    
     place=waypoint_autocomplete.getPlace();
-    //Añadimos a la ruta
+    // Añadimos a la ruta
     waypoints.push({
     	'location': nuevoPunto,
     	'stopover':true
     });
     cont=cont+1;
-    
     return false;
 }
 
 /**
- * Funcion que busca si existe ya el <li> dentrol del <ul>
+ * Funcion que busca si existe ya el
+ * <li> dentrol del
+ * <ul>
  * Devuelve true si no existe.
  */
 function find_li(contenido)
@@ -245,8 +290,7 @@ function find_li(contenido)
 }
 
 /**
- * Funcion para eliminar los elementos
- * Tiene que recibir el elemento pulsado
+ * Funcion para eliminar los elementos Tiene que recibir el elemento pulsado
  */
 function eliminarPuntoIntermedio(elemento)
 {
@@ -254,8 +298,23 @@ function eliminarPuntoIntermedio(elemento)
     node=document.getElementById(id);
     node.parentNode.removeChild(node);
     
-  //Añadimos a la ruta
-    waypoints.pop();
+  // Añadimos a la ruta
+    for(var i=0;i<waypoints.length; i++){
+    	if(waypoints[i].location==id){
+    		waypoints.splice(i, 1);
+    	}
+    }
     cont=cont-1;
     
+}
+
+function informar(mensaje){
+	var dialog = bootbox.dialog({
+	    message: '<p><i class="fa fa-spin fa-spinner"></i> Guardando...</p>'
+	});
+	dialog.init(function(){
+	    setTimeout(function(){
+	        dialog.find('.bootbox-body').html(mensaje);
+	    }, 1500);
+	});
 }
