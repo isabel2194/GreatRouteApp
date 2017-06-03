@@ -65,6 +65,13 @@ public class HomeController {
 		mav.addObject("logout", logout);
 		return mav;
 	}
+	
+	@GetMapping("/public/index")
+	public ModelAndView mapaPublico() {
+		ModelAndView mav = new ModelAndView(DEFAULT_LAYOUT);
+		mav.addObject(DEFAULT_VIEW_ATTRIBUTE_NAME, "mapaabierto");
+		return mav;
+	}
 
 	@GetMapping("/public/registro")
 	public ModelAndView registro(@RequestParam(name = "error", required = false) String error) {

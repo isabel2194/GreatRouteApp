@@ -26,10 +26,18 @@
 			<li class="pull-right" th:if="${view}=='misRutas'">
 			<form id="desconectarse" th:action="@{/logout}" method="POST"><button class="button-logout" type="submit">Cerrar sesión</button></form></li>
 			<li th:if="${view}=='contacto'"><a id="registrarse" th:href="@{/public/registro}">Registrate</a></li>
-			<li th:if="${view}=='contacto'" class="pull-right"><a id="login" class="pull-right" th:href="@{/public/login}">Iniciar sesión</a></li>
+			<li th:if="${view}=='contacto'" class="pull-left"><a id="mapaabierto" th:href="@{/public/index}">Crear ruta</a></li>
+			<li th:if="${view}=='contacto'" class="active"><a th:href="@{/index}">Home</a></li>
 			<li th:if="${view}=='login'"><a id="registrarse" th:href="@{/public/registro}">Registrate</a></li>
+			<li th:if="${view}=='login'" class="pull-left"><a id="mapaabierto" th:href="@{/public/index}">Crear ruta</a></li>
 			<li th:if="${view}=='registro'" class="pull-right"><a id="login" class="pull-right" th:href="@{/public/login}">Iniciar sesión</a></li>
+			<li th:if="${view}=='registro'" class="pull-left"><a id="mapaabierto" th:href="@{/public/index}">Crear ruta</a></li>
 			<li th:if="${view}=='registro'"><a id="contacto" th:href="@{/public/contacto}">Contacto</a></li>
+			<li th:if="${view}=='mapaabierto'" ><a id="imprimir" href="#">Imprimir</a></li>
+			<li th:if="${view}=='mapaabierto'" ><a id="borrar" href="#">Borrar</a></li>
+			<li th:if="${view}=='mapaabierto'" class="pull-right" ><a id="contacto" th:href="@{/public/contacto}">Contacto</a></li>
+			<li th:if="${view}=='mapaabierto'" class="pull-right"><a id="login" th:href="@{/public/login}">Iniciar sesión</a></li>
+			<li th:if="${view}=='mapaabierto'" class="pull-right"><a id="registrarse" th:href="@{/public/registro}">Registrate</a></li>
 			<li th:if="${view}=='login'"><a id="contacto" th:href="@{/public/contacto}">Contacto</a></li>
 		</ul>
 	</header>
